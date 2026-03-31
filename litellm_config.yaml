@@ -4,24 +4,24 @@ model_list:
     litellm_params:
       model: deepseek/deepseek-chat
       api_base: https://api.deepseek.com/v1
-      api_key: "sk-40c27e4c363c48f2b4cc1dc9a6239387"  # 从环境变量读取 Key，安全防泄漏
+      api_key: "os.environ/DEEPSEEK_API_KEY"
 
   # OpenAI / 兼容 OpenAI 的中转平台（需要：OPENAI_API_KEY；可选：OPENAI_BASE_URL）
   - model_name: openai/gpt-4.1-free
     litellm_params:
       model: openai/gpt-4.1-free
-      api_key: "sk-QcLBbR7D5D5nnIDn72820e7dE5D84d28B84b24217c766593"
+      api_key: "os.environ/AIHUBMIX_KEY"
       api_base: "https://aihubmix.com/v1"
 
   # 智谱 GLM / coding-glm（通常通过 OpenAI 兼容中转平台访问）
   - model_name: openai/coding-glm-5.1-free
     litellm_params:
       model: openai/coding-glm-5.1-free
-      api_key: "sk-QcLBbR7D5D5nnIDn72820e7dE5D84d28B84b24217c766593"
+      api_key: "os.environ/AIHUBMIX_KEY"
       api_base: "https://aihubmix.com/v1"
 
   # Gemini（需要：GEMINI_API_KEY）
   - model_name: gemini/gemini-3-flash-preview-free
     litellm_params:
       model: gemini/gemini-3-flash-preview-free
-      api_key: "AIzaSyCzGSWOM-BUcc8yUpyxUSB2CUNUW2Dtz94"
+      api_key: "os.environ/GEMINI_API_KEY"
