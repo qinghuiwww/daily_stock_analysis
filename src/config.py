@@ -1906,18 +1906,24 @@ class Config:
         支持两种配置方式：
         1. .env 文件（本地开发、定时任务模式） - 修改后下次执行自动生效
         2. 系统环境变量（GitHub Actions、Docker） - 启动时固定，运行中不变
+
+        GitHub Actions：workflow 注入的 ``STOCK_LIST`` 必须优先于仓库内 ``.env``，
+        否则误提交/检出的 ``.env`` 会覆盖 Variables/Secrets（表现为 shell 打印正确、
+        pipeline 仍分析旧股票列表）。
         """
-        # 优先从 .env 文件读取最新配置，这样即使在容器环境中修改了 .env 文件，
-        # 也能获取到最新的股票列表配置
         env_file = os.getenv("ENV_FILE")
         env_path = Path(env_file) if env_file else (Path(__file__).parent.parent / '.env')
         stock_list_str = ''
-        if env_path.exists():
-            # 直接从 .env 文件读取最新的配置
+
+        # CI：以进程环境为准（与 workflow env: STOCK_LIST 一致）
+        if (os.getenv("GITHUB_ACTIONS") or "").strip().lower() in {"true", "1", "yes"}:
+            stock_list_str = (os.getenv("STOCK_LIST") or "").strip()
+
+        # 本地/容器：优先持久化 .env，便于不改环境变量即可热更新自选股（Issue #529）
+        if not stock_list_str and env_path.exists():
             env_values = dotenv_values(env_path)
             stock_list_str = (env_values.get('STOCK_LIST') or '').strip()
 
-        # 如果 .env 文件不存在或未配置，才尝试从系统环境变量读取
         if not stock_list_str:
             stock_list_str = os.getenv('STOCK_LIST', '')
 
